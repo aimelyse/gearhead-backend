@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { User } from 'src/users/entities/user.entity';
 import { CreateCarspotDto } from './dto/create-carspot.dto';
 import { UpdateCarspotDto } from './dto/update-carspot.dto';
 import { Carspot, CarspotDocument } from './entities/carspot.entity';
@@ -13,6 +14,7 @@ import { Carspot, CarspotDocument } from './entities/carspot.entity';
 export class CarspotsService {
   constructor(
     @InjectModel(Carspot.name) private carspotModel: Model<CarspotDocument>,
+    @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
   async create(
@@ -26,10 +28,40 @@ export class CarspotsService {
     return await createdCarspot.save();
   }
 
-  async findAll(): Promise<Carspot[]> {
+  async findAll(): Promise<any[]> {
+    const carspots = await this.carspotModel
+      .find({ isPublic: true })
+      .populate('carID')
+      .sort({ createdAt: -1 })
+      .exec();
+
+    // Manually populate user data using Firebase UID
+    const populatedCarspots = await Promise.all(
+      carspots.map(async (carspot) => {
+        const user = await this.userModel.findOne({
+          firebaseUid: carspot.userID,
+        });
+        return {
+          ...carspot.toObject(),
+          user: user
+            ? {
+                name: user.name,
+                profileImage: user.profileImage,
+                uid: user.firebaseUid || carspot.userID,
+              }
+            : null,
+        };
+      }),
+    );
+
+    return populatedCarspots;
+  }
+
+  // Option B: If User _id is Firebase UID (Recommended)
+  async findAllWithFirebaseUID(): Promise<any[]> {
     return await this.carspotModel
       .find({ isPublic: true })
-      .populate('userID', 'name profileImage')
+      .populate('userID', 'name profileImage') // This will work if User._id = Firebase UID
       .populate('carID')
       .sort({ createdAt: -1 })
       .exec();
@@ -37,8 +69,7 @@ export class CarspotsService {
 
   async findByUser(userId: string): Promise<Carspot[]> {
     return await this.carspotModel
-      .find({ userID: userId })
-      .populate('userID', 'name profileImage')
+      .find({ userID: userId }) // Direct string comparison
       .populate('carID')
       .sort({ createdAt: -1 })
       .exec();

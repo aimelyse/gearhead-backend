@@ -26,23 +26,7 @@ export class CarspotsController {
   }
 
   @Get()
-  findAll(
-    @Query('userId') userId?: string,
-    @Query('lat') lat?: string,
-    @Query('lng') lng?: string,
-    @Query('radius') radius?: string,
-  ) {
-    if (userId) {
-      return this.carspotsService.findByUser(userId);
-    }
-
-    if (lat && lng) {
-      const latitude = parseFloat(lat);
-      const longitude = parseFloat(lng);
-      const searchRadius = radius ? parseFloat(radius) : 10;
-      return this.carspotsService.findNearby(latitude, longitude, searchRadius);
-    }
-
+  findAll() {
     return this.carspotsService.findAll();
   }
 
