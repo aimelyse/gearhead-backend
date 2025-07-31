@@ -11,11 +11,22 @@ async function bootstrap() {
     .setTitle('API')
     .setDescription('API docs')
     .setVersion('1.0')
-    .addBearerAuth()
+    .setLicense('MIT', 'https://opensource.org/licenses/MIT')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter your Firebase access token',
+        in: 'header',
+      },
+      'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controller!
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);
-  await app.listen(7000);
+  await app.listen(5050);
 }
 bootstrap();

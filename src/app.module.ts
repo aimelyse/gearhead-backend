@@ -19,6 +19,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { ChallengesModule } from './challenges/challenges.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app.config';
 
 @Module({
@@ -45,6 +46,7 @@ import appConfig from './config/app.config';
     NotificationsModule,
     AchievementsModule,
     ChallengesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
