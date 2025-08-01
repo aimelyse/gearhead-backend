@@ -30,9 +30,17 @@ export class QuestsService {
   async findAll(): Promise<Quest[]> {
     return await this.questModel
       .find({ status: 'Open' })
-      .populate('requesterID', 'name profileImage location')
+      .populate({
+        path: 'requesterID',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage location',
+      })
       .populate('skillID')
-      .populate('applicants', 'name profileImage')
+      .populate({
+        path: 'applicants',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
       .sort({ createdAt: -1 })
       .exec();
   }
@@ -40,10 +48,22 @@ export class QuestsService {
   async findByStatus(status: string): Promise<Quest[]> {
     return await this.questModel
       .find({ status })
-      .populate('requesterID', 'name profileImage location')
+      .populate({
+        path: 'requesterID',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage location',
+      })
       .populate('skillID')
-      .populate('applicants', 'name profileImage')
-      .populate('assignedTo', 'name profileImage')
+      .populate({
+        path: 'applicants',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
+      .populate({
+        path: 'assignedTo',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
       .sort({ createdAt: -1 })
       .exec();
   }
@@ -51,9 +71,16 @@ export class QuestsService {
   async findBySkill(skillId: string): Promise<Quest[]> {
     return await this.questModel
       .find({ skillID: skillId, status: 'Open' })
-      .populate('requesterID', 'name profileImage location')
-      .populate('skillID')
-      .populate('applicants', 'name profileImage')
+      .populate({
+        path: 'requesterID',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage location',
+      })
+      .populate({
+        path: 'applicants',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
       .sort({ createdAt: -1 })
       .exec();
   }
@@ -61,10 +88,22 @@ export class QuestsService {
   async findByRequester(requesterId: string): Promise<Quest[]> {
     return await this.questModel
       .find({ requesterID: requesterId })
-      .populate('requesterID', 'name profileImage location')
+      .populate({
+        path: 'requesterID',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage location',
+      })
       .populate('skillID')
-      .populate('applicants', 'name profileImage')
-      .populate('assignedTo', 'name profileImage')
+      .populate({
+        path: 'applicants',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
+      .populate({
+        path: 'assignedTo',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
       .sort({ createdAt: -1 })
       .exec();
   }
@@ -72,10 +111,22 @@ export class QuestsService {
   async findByApplicant(userId: string): Promise<Quest[]> {
     return await this.questModel
       .find({ applicants: userId })
-      .populate('requesterID', 'name profileImage location')
+      .populate({
+        path: 'requesterID',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage location',
+      })
       .populate('skillID')
-      .populate('applicants', 'name profileImage')
-      .populate('assignedTo', 'name profileImage')
+      .populate({
+        path: 'applicants',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
+      .populate({
+        path: 'assignedTo',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
       .sort({ createdAt: -1 })
       .exec();
   }
@@ -83,10 +134,22 @@ export class QuestsService {
   async findAssignedToUser(userId: string): Promise<Quest[]> {
     return await this.questModel
       .find({ assignedTo: userId })
-      .populate('requesterID', 'name profileImage location')
+      .populate({
+        path: 'requesterID',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage location',
+      })
       .populate('skillID')
-      .populate('applicants', 'name profileImage')
-      .populate('assignedTo', 'name profileImage')
+      .populate({
+        path: 'applicants',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
+      .populate({
+        path: 'assignedTo',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
       .sort({ createdAt: -1 })
       .exec();
   }
@@ -94,10 +157,22 @@ export class QuestsService {
   async findOne(id: string): Promise<Quest> {
     const quest = await this.questModel
       .findById(id)
-      .populate('requesterID', 'name profileImage location')
+      .populate({
+        path: 'requesterID',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage location',
+      })
       .populate('skillID')
-      .populate('applicants', 'name profileImage')
-      .populate('assignedTo', 'name profileImage')
+      .populate({
+        path: 'applicants',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
+      .populate({
+        path: 'assignedTo',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
       .exec();
 
     if (!quest) {
@@ -123,10 +198,22 @@ export class QuestsService {
 
     const updatedQuest = await this.questModel
       .findByIdAndUpdate(id, updateQuestDto, { new: true })
-      .populate('requesterID', 'name profileImage location')
+      .populate({
+        path: 'requesterID',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage location',
+      })
       .populate('skillID')
-      .populate('applicants', 'name profileImage')
-      .populate('assignedTo', 'name profileImage')
+      .populate({
+        path: 'applicants',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
+      .populate({
+        path: 'assignedTo',
+        foreignField: 'firebaseUid',
+        select: 'name profileImage',
+      })
       .exec();
 
     return updatedQuest;
