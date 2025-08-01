@@ -30,8 +30,16 @@ export class EventsService {
   async findAll(): Promise<Event[]> {
     return await this.eventModel
       .find({ status: { $in: ['upcoming', 'ongoing'] } })
-      .populate('organizerID', 'name profileImage location')
-      .populate('attendees', 'name profileImage')
+      .populate({
+        path: 'organizerID',
+        foreignField: 'firebaseUid', // Match by firebaseUid
+        select: 'name profileImage location',
+      })
+      .populate({
+        path: 'attendees',
+        foreignField: 'firebaseUid', // Match by firebaseUid
+        select: 'name profileImage',
+      })
       .sort({ eventDate: 1 })
       .exec();
   }
@@ -43,8 +51,16 @@ export class EventsService {
         status: 'upcoming',
         eventDate: { $gte: now },
       })
-      .populate('organizerID', 'name profileImage location')
-      .populate('attendees', 'name profileImage')
+      .populate({
+        path: 'organizerID',
+        foreignField: 'firebaseUid', // Match by firebaseUid
+        select: 'name profileImage location',
+      })
+      .populate({
+        path: 'attendees',
+        foreignField: 'firebaseUid', // Match by firebaseUid
+        select: 'name profileImage',
+      })
       .sort({ eventDate: 1 })
       .exec();
   }
@@ -55,8 +71,16 @@ export class EventsService {
         eventType,
         status: { $in: ['upcoming', 'ongoing'] },
       })
-      .populate('organizerID', 'name profileImage location')
-      .populate('attendees', 'name profileImage')
+      .populate({
+        path: 'organizerID',
+        foreignField: 'firebaseUid', // Match by firebaseUid
+        select: 'name profileImage location',
+      })
+      .populate({
+        path: 'attendees',
+        foreignField: 'firebaseUid', // Match by firebaseUid
+        select: 'name profileImage',
+      })
       .sort({ eventDate: 1 })
       .exec();
   }
@@ -64,8 +88,16 @@ export class EventsService {
   async findByOrganizer(organizerId: string): Promise<Event[]> {
     return await this.eventModel
       .find({ organizerID: organizerId })
-      .populate('organizerID', 'name profileImage location')
-      .populate('attendees', 'name profileImage')
+      .populate({
+        path: 'organizerID',
+        foreignField: 'firebaseUid', // Match by firebaseUid
+        select: 'name profileImage location',
+      })
+      .populate({
+        path: 'attendees',
+        foreignField: 'firebaseUid', // Match by firebaseUid
+        select: 'name profileImage',
+      })
       .sort({ eventDate: -1 })
       .exec();
   }
@@ -73,8 +105,16 @@ export class EventsService {
   async findByAttendee(userId: string): Promise<Event[]> {
     return await this.eventModel
       .find({ attendees: userId })
-      .populate('organizerID', 'name profileImage location')
-      .populate('attendees', 'name profileImage')
+      .populate({
+        path: 'organizerID',
+        foreignField: 'firebaseUid', // Match by firebaseUid
+        select: 'name profileImage location',
+      })
+      .populate({
+        path: 'attendees',
+        foreignField: 'firebaseUid', // Match by firebaseUid
+        select: 'name profileImage',
+      })
       .sort({ eventDate: 1 })
       .exec();
   }
