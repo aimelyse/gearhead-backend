@@ -30,8 +30,8 @@ export class Event {
   @Prop({ required: true })
   endTime: string;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }], default: [] })
-  attendees: Types.ObjectId[];
+  @Prop({ type: [{ type: String, ref: 'User' }], default: [] })
+  attendees: String[];
 
   @Prop({ required: true })
   maxAttendees: number;
