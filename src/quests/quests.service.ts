@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { User, UserDocument } from 'src/users/entities/user.entity';
 import { CreateQuestDto } from './dto/create-quest.dto';
 import { UpdateQuestDto } from './dto/update-quest.dto';
 import { Quest, QuestDocument } from './entities/quest.entity';
@@ -14,6 +15,7 @@ import { Quest, QuestDocument } from './entities/quest.entity';
 export class QuestsService {
   constructor(
     @InjectModel(Quest.name) private questModel: Model<QuestDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
   async create(
@@ -47,7 +49,7 @@ export class QuestsService {
 
   async findByStatus(status: string): Promise<Quest[]> {
     return await this.questModel
-      .find({ status })
+      .find({ status: status })
       .populate({
         path: 'requesterID',
         foreignField: 'firebaseUid',
@@ -108,9 +110,12 @@ export class QuestsService {
       .exec();
   }
 
-  async findByApplicant(userId: string): Promise<Quest[]> {
+  async findByApplicant(firebaseUid: string): Promise<Quest[]> {
+    const user = await this.userModel.findOne({ firebaseUid }).exec();
+    if (!user) return [];
+
     return await this.questModel
-      .find({ applicants: userId })
+      .find({ applicants: user._id }) // use ObjectId
       .populate({
         path: 'requesterID',
         foreignField: 'firebaseUid',
@@ -119,12 +124,10 @@ export class QuestsService {
       .populate('skillID')
       .populate({
         path: 'applicants',
-        foreignField: 'firebaseUid',
         select: 'name profileImage',
       })
       .populate({
         path: 'assignedTo',
-        foreignField: 'firebaseUid',
         select: 'name profileImage',
       })
       .sort({ createdAt: -1 })
